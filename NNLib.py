@@ -26,21 +26,30 @@ def initMatrix(row, column):
 			M[i].append(random.uniform(-1.,1.))
 	return np.array(M, dtype = np.float32)
 
-def createOneHot(k, classes):
-	Y = []
-	for i in range(classes):
-		Y.append(0)
-	Y[int(k)] = 1
-	return Y
+# def createOneHot(k, classes):
+	# Y = []
+	# for i in range(classes):
+	# 	Y.append(0)
+	# Y[int(k)] = 1
+	# return Y
+	
 
-def loadAttributesAndLabels(dataSet, dataIndex, classes, batchSize):
-	X = [[] for i in range(batchSize)]
-	Y = []
+def loadAttributesAndLabels(dataSet, dataIndex, classes, batchSize, features):
+	# X = [[] for i in range(batchSize)]
+	# Y = []
+	# for i in range(batchSize):
+	# 	for j in range(len(dataSet[i])-1):
+	# 		X[i].append(dataSet[dataIndex+i][j])
+	# 	Y.append(createOneHot(int(dataSet[dataIndex][-1]), classes))
+	# return np.transpose(X), np.transpose(Y) 
+	X = np.zeros([features, batchSize])
+	Y = np.zeros([classes, batchSize])
 	for i in range(batchSize):
-		for j in range(len(dataSet[i])-1):
-			X[i].append(dataSet[dataIndex+i][j])
-		Y.append(createOneHot(int(dataSet[dataIndex][-1]), classes))
-	return np.transpose(X), np.transpose(Y) 
+		for j in range(features):
+			X[j][i] = dataSet[dataIndex+i][j]
+		Y[int(dataSet[dataIndex+i][-1])][i] = 1
+	return X, Y
+
 
 def printMatrix(M):
 	for i in range(len(M)):
@@ -85,29 +94,36 @@ def hadamard(A, B):
 
 def convertProb(Y):
 	Y = np.transpose(Y)
-	Y = np.array(Y)
-	temp = [[] for i in range(len(Y))]
 	for i in range(len(Y)):
 		maxV = max(Y[i])
 		for j in range(len(Y[i])):
 			if Y[i][j] == maxV:
-				temp[i].append(1)
+				Y[i][j] = 1
 				continue
-			temp[i].append(0)
-	return np.transpose(temp)
+			Y[i][j] = 0
+	return np.transpose(Y)
 
 def compareOutput(A, B):
-	# A = np.transpose(A)
-	# B = np.transpose(B)
-	A = np.array(A)
-	B = np.array(B)
+	A = np.transpose(A)
+	B = np.transpose(B)
 	counter = 0
 	for i in range(len(A)):
-		equal = True
-		for j in range(len(A[i])):
-			if A[i][j] != B[i][j]:
-				equal = False
-				break
-		if equal:
+		if np.array_equal(A[i],B[i]):
 			counter += 1
 	return counter
+
+
+def crossEntropy(yHat, y):
+	cost = 0.
+	for i in range(len(y)):
+		for j in range(len(y[0])):
+			cost += y[i][j]*np.log(yHat[i][j])
+	return -(cost/len(y[0]))
+
+def meanAbsoluteError(yHat, y):
+	cost = 0.
+	for i in range(len(y)):
+		for j in range(len(y[0])):
+			cost += np.absolute(y[i][j] - yHat[i][j])
+			# cost += y[i][j]*np.log(yHat[i][j])
+	return (cost/(len(y)*len(y[0])))
