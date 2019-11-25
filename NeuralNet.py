@@ -21,12 +21,8 @@ class NeuralNet(object):
 	def __init__(self, data, numberOfClasses, batchSize, numberOfHiddenNodes):
 		self.data = data
 		self.data = self.data.astype(np.float64)
-		# print(self.data.astype(np.float64))
-		# print(self.data)
 		for i in range(data.shape[1] - 1):
-			# print(self.data[:,i])
-			self.data[:,i] = NN.dataNormalization(self.data[:,i])
-		# print(self.data)
+			self.data[:,i] = NN.standartization(self.data[:,i])
 		self.nbClass = numberOfClasses
 		self.nbBatch = batchSize
 		self.nbHiddenNodes = numberOfHiddenNodes
@@ -40,32 +36,14 @@ class NeuralNet(object):
 		self.b2 = NN.initMatrix(self.nbClass, 1) # TODO CHECK LATER!! 
 
 		
-		self.train(200)
+		self.train(15)
 
 
 	def train(self, nbEpoch):
-		
-		# print(str(self.W1))
-		# print()
-		# print(str(self.W2))
-		# print()
-		# print(str(self.b1))
-		# print()
-		# print(str(self.b2))
-		# print()
 		for i in range(nbEpoch):
-			# print(self.W1)
 			data = NN.shuffleTrainingData(self.data)
-			trainData, testData = self.dataSplit(data, 0.5)
+			trainData, testData = self.dataSplit(data, 0.6)
 			self.trainingEpoch(trainData)
-			# print(str(self.W1))
-			# print()
-			# print(str(self.W2))
-			# print()
-			# print(str(self.b1))
-			# print()
-			# print(str(self.b2))
-			# print()
 			self.testPrediction(testData)
 
 
@@ -85,13 +63,10 @@ class NeuralNet(object):
 			A1 = NN.tanh(Z1)
 			Z2 = self.W2@A1 + self.b2
 			A2 = NN.tanh(Z2)
-			# print(str(A2))
-			# A2 = NN.convertProb(A2)
 
 			# Back-propogation
-			error = NN.meanAbsoluteError(A2, Y_train)
+			error = A2 - Y_train
 			total_error += np.sum(np.abs(error))
-			# print(error)
 
 			delta2 = error*NN.tanhDeriv(A2)
 			self.W2 = self.W2 - self.eta * (delta2@np.transpose(A1))
@@ -99,7 +74,6 @@ class NeuralNet(object):
 			delta1 = NN.tanhDeriv(A1)*(self.W2@delta2)
 			self.W1 = self.W1 - self.eta * (delta1@np.transpose(X_train))
 			self.b1 = self.b1 - self.eta * delta1
-		print(total_error / len(trainData))
 
 	def testPrediction(self, testData):
 		predicted = 0
@@ -117,7 +91,6 @@ class NeuralNet(object):
 			A1 = NN.tanh(Z1)
 			Z2 = self.W2@A1 + self.b2
 			A2 = NN.tanh(Z2)
-			
 			A2 = NN.convertProb(A2)
 
 			# Compare result
@@ -128,7 +101,6 @@ class NeuralNet(object):
 
 	def dataSplit(self, data, trainCoef):
 		trainingSize = int(len(data) * trainCoef)
-		# testSize = len(data) - trainingSize
 		trainData = data[:trainingSize][:]
 		testData = data[trainingSize:][:]
 		return trainData, testData

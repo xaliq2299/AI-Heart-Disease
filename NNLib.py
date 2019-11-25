@@ -5,22 +5,12 @@ import numpy as np
 def shuffleTrainingData(dataSet):
 	indexes = np.random.permutation(dataSet.shape[0])
 	return dataSet[indexes]
-    # i = len(dataSet)
-    # while i > 1:
-    #     i = i - 1
-    #     j = random.randrange(i)  # 0 <= j <= i-1
-    #     dataSet[j], dataSet[i] = dataSet[i], dataSet[j]
-    # return dataSet
 
 def dataNormalization(arr):
 	return (arr - np.min(arr)) / (np.max(arr) - np.min(arr))
-	# arr = np.array(arr, dtype=np.float32)
-	# minV = float(min(arr))
-	# maxV = float(max(arr))
-	# temp = []
-	# for i in arr:
-	# 	temp.append((float(i)-minV)/(maxV-minV))
-	# return temp
+
+def standartization(arr):
+	return (arr - np.mean(arr)) / np.std(arr)
 
 def initMatrix(row, column):
 	M = [[] for i in range(row)]
@@ -29,22 +19,7 @@ def initMatrix(row, column):
 			M[i].append(random.uniform(-.0001,.0001))
 	return np.array(M, dtype = np.float32)
 
-# def createOneHot(k, classes):
-	# Y = []
-	# for i in range(classes):
-	# 	Y.append(0)
-	# Y[int(k)] = 1
-	# return Y
-	
-
 def loadAttributesAndLabels(dataSet, dataIndex, classes, batchSize, features):
-	# X = [[] for i in range(batchSize)]
-	# Y = []
-	# for i in range(batchSize):
-	# 	for j in range(len(dataSet[i])-1):
-	# 		X[i].append(dataSet[dataIndex+i][j])
-	# 	Y.append(createOneHot(int(dataSet[dataIndex][-1]), classes))
-	# return np.transpose(X), np.transpose(Y) 
 	X = np.zeros([features, batchSize])
 	Y = np.zeros([classes, batchSize])
 	for i in range(batchSize):
@@ -54,19 +29,8 @@ def loadAttributesAndLabels(dataSet, dataIndex, classes, batchSize, features):
 	return X, Y
 
 
-def printMatrix(M):
-	for i in range(len(M)):
-		for j in range(len(M[i])):
-			print(str(M[i][j]) + " ",end="")
-		print()
-
 def tanh(Z):
-	Z = (np.exp(2 * Z) - 1) / (np.exp(2 * Z) + 1)
-	# for i in range(len(Z)):	
-		# for j in range(len(Z[i])):
-			# Z[i][j] = (float(2)/(1 + np.exp(float(-2) * Z[i][j]))) - 1
-			# Z[i][j] = (np.exp(2 * Z[i][j])) / ()
-	return Z
+	return (np.exp(2 * Z) - 1) / (np.exp(2 * Z) + 1)
 
 def tanhDeriv(Z):
 	return np.subtract(1, np.power(Z,2))
@@ -92,10 +56,6 @@ def floatMultMatrix(A, n):
 		for j in range(len(A[i])):
 			A[i][j] = A[i][j] * n
 	return A
-
-def hadamard(A, B):
-	return np.matrix(np.array(A) * np.array(B))
-	# return A*B
 
 def convertProb(Y):
 	Y = np.transpose(Y)
@@ -124,17 +84,3 @@ def crossEntropy(yHat, y):
 		for j in range(len(y[0])):
 			cost += y[i][j]*np.log(yHat[i][j])
 	return -(cost/len(y[0]))
-
-def meanAbsoluteError(yHat, y):
-	# cost = 0.
-	# print(y - yHat)
-	return yHat - y
-	# return y - yHat
-	# for i in range(len(y)):
-	# 	for j in range(len(y[0])):
-	# 		# cost += np.absolute(y[i][j] - yHat[i][j])
-	# 		cost += y[i][j] - yHat[i][j]
-	# 		# cost += y[i][j]*np.log(yHat[i][j])
-	# print(f"y: {y}")
-	# print(f"yHat: {yHat}")
-	# return (cost/float(len(y)*len(y[0])))
