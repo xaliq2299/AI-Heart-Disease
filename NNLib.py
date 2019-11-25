@@ -3,27 +3,30 @@ import math
 import numpy as np
 
 def shuffleTrainingData(dataSet):
-    i = len(dataSet)
-    while i > 1:
-        i = i - 1
-        j = random.randrange(i)  # 0 <= j <= i-1
-        dataSet[j], dataSet[i] = dataSet[i], dataSet[j]
-    return dataSet
+	indexes = np.random.permutation(dataSet.shape[0])
+	return dataSet[indexes]
+    # i = len(dataSet)
+    # while i > 1:
+    #     i = i - 1
+    #     j = random.randrange(i)  # 0 <= j <= i-1
+    #     dataSet[j], dataSet[i] = dataSet[i], dataSet[j]
+    # return dataSet
 
-def dataNormalizaion(arr):
+def dataNormalization(arr):
+	return (arr - np.min(arr)) / (np.max(arr) - np.min(arr))
 	# arr = np.array(arr, dtype=np.float32)
-	minV = float(min(arr))
-	maxV = float(max(arr))
-	temp = []
-	for i in arr:
-		temp.append((float(i)-minV)/(maxV-minV))
-	return temp
+	# minV = float(min(arr))
+	# maxV = float(max(arr))
+	# temp = []
+	# for i in arr:
+	# 	temp.append((float(i)-minV)/(maxV-minV))
+	# return temp
 
 def initMatrix(row, column):
 	M = [[] for i in range(row)]
 	for i in range(row):
 		for j in range(column):
-			M[i].append(random.uniform(-1.,1.))
+			M[i].append(random.uniform(-.0001,.0001))
 	return np.array(M, dtype = np.float32)
 
 # def createOneHot(k, classes):
@@ -58,9 +61,11 @@ def printMatrix(M):
 		print()
 
 def tanh(Z):
-	for i in range(len(Z)):	
-		for j in range(len(Z[i])):
-			Z[i][j] = (float(2)/(1 + np.exp(float(-2) * Z[i][j]))) - 1
+	Z = (np.exp(2 * Z) - 1) / (np.exp(2 * Z) + 1)
+	# for i in range(len(Z)):	
+		# for j in range(len(Z[i])):
+			# Z[i][j] = (float(2)/(1 + np.exp(float(-2) * Z[i][j]))) - 1
+			# Z[i][j] = (np.exp(2 * Z[i][j])) / ()
 	return Z
 
 def tanhDeriv(Z):
@@ -121,9 +126,15 @@ def crossEntropy(yHat, y):
 	return -(cost/len(y[0]))
 
 def meanAbsoluteError(yHat, y):
-	cost = 0.
-	for i in range(len(y)):
-		for j in range(len(y[0])):
-			cost += np.absolute(y[i][j] - yHat[i][j])
-			# cost += y[i][j]*np.log(yHat[i][j])
-	return (cost/(len(y)*len(y[0])))
+	# cost = 0.
+	# print(y - yHat)
+	return yHat - y
+	# return y - yHat
+	# for i in range(len(y)):
+	# 	for j in range(len(y[0])):
+	# 		# cost += np.absolute(y[i][j] - yHat[i][j])
+	# 		cost += y[i][j] - yHat[i][j]
+	# 		# cost += y[i][j]*np.log(yHat[i][j])
+	# print(f"y: {y}")
+	# print(f"yHat: {yHat}")
+	# return (cost/float(len(y)*len(y[0])))

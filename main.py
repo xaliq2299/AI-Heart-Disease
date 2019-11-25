@@ -12,10 +12,12 @@ def read_file(filename):
 	return data_from_file
 
 def main():
-	data_from_file = []
+	# data_from_file = []
 	data_from_file = np.array(read_file("iris_num.data"))
 	neuron = NeuralNet(data_from_file, 3, 1, 3)
-
+	# temp = input()
+	# while temp == 'r':
+	# 	neuron.train(50)
 
 
 
