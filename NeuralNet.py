@@ -17,7 +17,7 @@ class NeuralNet(object):
 	nbBatch = 0
 	nbClass = 0
 	nbFeatures = 0
-	eta = 0.1
+	eta = 0.05
 	def __init__(self, data, numberOfClasses, batchSize, numberOfHiddenNodes):
 		self.data = data
 		self.data = self.data.astype(np.float64)
@@ -27,9 +27,7 @@ class NeuralNet(object):
 		self.nbBatch = batchSize
 		self.nbHiddenNodes = numberOfHiddenNodes
 		self.nbFeatures = len(data[0])-1
-		
-
-		
+				
 		self.W1 = NN.initMatrix(self.nbHiddenNodes, self.nbFeatures)
 		self.W2 = NN.initMatrix(self.nbClass, self.nbHiddenNodes)
 		self.b1 = NN.initMatrix(self.nbHiddenNodes, 1) # TODO CHECK LATER!! 
@@ -37,12 +35,13 @@ class NeuralNet(object):
 
 		
 		self.train(15)
+		print()
 
 
 	def train(self, nbEpoch):
 		for i in range(nbEpoch):
 			data = NN.shuffleTrainingData(self.data)
-			trainData, testData = self.dataSplit(data, 0.6)
+			trainData, testData = self.dataSplit(data, 0.7)
 			self.trainingEpoch(trainData)
 			self.testPrediction(testData)
 
@@ -50,7 +49,6 @@ class NeuralNet(object):
 	def trainingEpoch(self, trainData):
 		dataIndex = 0
 		batchSize = self.nbBatch
-		total_error = 0.
 		while True:
 			if (dataIndex + batchSize) >= len(trainData):
 				if dataIndex >= len(trainData):
@@ -66,12 +64,10 @@ class NeuralNet(object):
 
 			# Back-propogation
 			error = A2 - Y_train
-			total_error += np.sum(np.abs(error))
-
 			delta2 = error*NN.tanhDeriv(A2)
 			self.W2 = self.W2 - self.eta * (delta2@np.transpose(A1))
 			self.b2 = self.b2 - self.eta * delta2
-			delta1 = NN.tanhDeriv(A1)*(self.W2@delta2)
+			delta1 = NN.tanhDeriv(A1)*(np.transpose(self.W2)@delta2)
 			self.W1 = self.W1 - self.eta * (delta1@np.transpose(X_train))
 			self.b1 = self.b1 - self.eta * delta1
 
