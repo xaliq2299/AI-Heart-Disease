@@ -13,6 +13,7 @@ def read_file(filename, separator, headerExist = False):
 		data_from_file.append(temp.split(separator))
 	return data_from_file
 
+
 def main():
 	data_from_file = np.array(read_file("heart_disease_dataset.csv", ';', True))
 	neuron = NeuralNet(data_from_file, 2, 1, 5)
