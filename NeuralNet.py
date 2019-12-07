@@ -18,6 +18,7 @@ class NeuralNet(object):
 	nbClass = 0
 	nbFeatures = 0
 	eta = 0.05
+	bestResult = 0.0001
 	def __init__(self, data, numberOfClasses, batchSize, numberOfHiddenNodes):
 		self.data = data
 		self.data = self.data.astype(np.float64)
@@ -27,12 +28,11 @@ class NeuralNet(object):
 		self.nbBatch = batchSize
 		self.nbHiddenNodes = numberOfHiddenNodes
 		self.nbFeatures = len(data[0])-1
-				
+
 		self.W1 = NN.initMatrix(self.nbHiddenNodes, self.nbFeatures)
 		self.W2 = NN.initMatrix(self.nbClass, self.nbHiddenNodes)
 		self.b1 = NN.initMatrix(self.nbHiddenNodes, 1) # TODO CHECK LATER!! 
 		self.b2 = NN.initMatrix(self.nbClass, 1) # TODO CHECK LATER!! 
-
 		
 		self.train(15)
 		print()
@@ -43,7 +43,9 @@ class NeuralNet(object):
 			data = NN.shuffleTrainingData(self.data)
 			trainData, testData = self.dataSplit(data, 0.7)
 			self.trainingEpoch(trainData)
-			self.testPrediction(testData)
+			temp = self.testPrediction(testData)
+			if temp > self.bestResult:
+				self.bestResult = temp
 
 
 	def trainingEpoch(self, trainData):
@@ -53,35 +55,38 @@ class NeuralNet(object):
 			if (dataIndex + batchSize) >= len(trainData):
 				if dataIndex >= len(trainData):
 					break
-				batchSize = len(trainData) - dataIndex 
-			X_train, Y_train = NN.loadAttributesAndLabels(trainData, dataIndex, self.nbClass, self.nbBatch, self.nbFeatures)
+				batchSize = len(trainData) - dataIndex
+			X_train, Y_train = NN.loadAttributesAndLabels(trainData, dataIndex, self.nbClass, batchSize, self.nbFeatures)
 			dataIndex += batchSize
-			# Feed-Forward
-			Z1 = self.W1@X_train + self.b1
+			B1 = np.tile(self.b1, (1,batchSize))
+			B2 = np.tile(self.b2, (1,batchSize))
+			# Feed-Forwards
+			Z1 = self.W1@X_train + B1
 			A1 = NN.tanh(Z1)
-			Z2 = self.W2@A1 + self.b2
+			Z2 = self.W2@A1 + B2
 			A2 = NN.tanh(Z2)
 
 			# Back-propogation
 			error = A2 - Y_train
 			delta2 = error*NN.tanhDeriv(A2)
 			self.W2 = self.W2 - self.eta * (delta2@np.transpose(A1))
-			self.b2 = self.b2 - self.eta * delta2
+			self.b2 = self.b2 - self.eta * NN.calcSumOfB(delta2, batchSize)
 			delta1 = NN.tanhDeriv(A1)*(np.transpose(self.W2)@delta2)
 			self.W1 = self.W1 - self.eta * (delta1@np.transpose(X_train))
-			self.b1 = self.b1 - self.eta * delta1
+			self.b1 = self.b1 - self.eta * NN.calcSumOfB(delta1, batchSize)
 
 	def testPrediction(self, testData):
 		predicted = 0
 		dataIndex = 0
 		batchSize = self.nbBatch
 		while True:
-			if (dataIndex + batchSize) >= len(testData):
+			if (dataIndex + batchSize) > len(testData):
 				if dataIndex >= len(testData):
 					break
-				batchSize = len(testData) - dataIndex 
-			X_train, Y_train = NN.loadAttributesAndLabels(testData, dataIndex, self.nbClass, self.nbBatch, self.nbFeatures)
+				batchSize = len(testData)  - dataIndex
+			X_train, Y_train = NN.loadAttributesAndLabels(testData, dataIndex, self.nbClass, batchSize, self.nbFeatures)
 			dataIndex += batchSize
+	
 			# Feed-Forward
 			Z1 = self.W1@X_train + self.b1
 			A1 = NN.tanh(Z1)
@@ -92,7 +97,7 @@ class NeuralNet(object):
 			# Compare result
 			predicted += NN.compareOutput(A2, Y_train)
 		print('MLP\'s accuracy=' + str(float(predicted/len(testData))*100) + '%')
-		return predicted
+		return (float(predicted/len(testData))*100)
 		
 
 	def dataSplit(self, data, trainCoef):

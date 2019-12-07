@@ -16,12 +16,15 @@ def read_file(filename, separator, headerExist = False):
 
 def main():
 	data_from_file = np.array(read_file("heart_disease_dataset.csv", ';', True))
-	neuron = NeuralNet(data_from_file, 2, 1, 5)
+	neuron = NeuralNet(data_from_file, 2, 8, 5)
+	print("Enter \"r\" for repeating tests(15 epochs)")
 	option = input()
 	while option == 'r':
 		neuron.train(15)
+		print("\nEnter \"r\" for repeating tests(15 epochs)")
 		option = input()
 
+	print('Best result achieved during tests:' + str(neuron.bestResult))
 
 
 main()

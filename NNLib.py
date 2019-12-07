@@ -84,3 +84,10 @@ def crossEntropy(yHat, y):
 		for j in range(len(y[0])):
 			cost += y[i][j]*np.log(yHat[i][j])
 	return -(cost/len(y[0]))
+
+def calcSumOfB(M, batchSize):
+	M = np.sum(M, axis=1)/batchSize
+	temp = np.zeros((len(M),1))
+	for i in range(len(M)):
+		temp[i][0] = M[i]
+	return temp
