@@ -40,6 +40,8 @@ class NeuralNet(object):
 
 	def train(self, nbEpoch):
 		for i in range(nbEpoch):
+			if i%100 == 0 and i!=0:
+				self.eta /= 1.5
 			data = NN.shuffleTrainingData(self.data)
 			trainData, testData = self.dataSplit(data, 0.7)
 			self.trainingEpoch(trainData)
@@ -80,7 +82,7 @@ class NeuralNet(object):
 		dataIndex = 0
 		batchSize = self.nbBatch
 		while True:
-			if (dataIndex + batchSize) > len(testData):
+			if (dataIndex + batchSize) >= len(testData):
 				if dataIndex >= len(testData):
 					break
 				batchSize = len(testData)  - dataIndex

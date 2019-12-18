@@ -17,10 +17,15 @@ def read_file(filename, separator, headerExist = False):
 def main():
 	
 	data_from_file = np.array(read_file("heart_disease_dataset.csv", ';', True))
+<<<<<<< HEAD
 	nbEpochs=int(input("Enter the number of epochs: "))
 	neuron = NeuralNet(data_from_file, 2, 8, 5)
 	print("Enter \n\"r\" for running tests (",nbEpochs, "epochs ) or \n\"b\" for the best accuracy result of last testing")
 
+=======
+	neuron = NeuralNet(data_from_file, 2, 4, 5)
+	print("Enter \"r\" for repeating tests(15 epochs)")
+>>>>>>> 97a6a02af8fd5fe53377f57c9015c206fe2009a7
 	option = input()
 	while option == 'r' or option == 'b':
 		if option == 'r':
