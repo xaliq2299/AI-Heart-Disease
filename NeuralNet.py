@@ -34,7 +34,7 @@ class NeuralNet(object):
 		self.b1 = NN.initMatrix(self.nbHiddenNodes, 1) # TODO CHECK LATER!! 
 		self.b2 = NN.initMatrix(self.nbClass, 1) # TODO CHECK LATER!! 
 		
-		self.train(15)
+		#self.train(15)
 		print()
 
 
