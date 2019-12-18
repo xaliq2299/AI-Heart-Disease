@@ -20,7 +20,7 @@ class NeuralNet(object):
 		self.nbClass = numberOfClasses
 		self.nbBatch = batchSize
 		self.nbHiddenNodes = numberOfHiddenNodes
-		self.nbFeatures = len(data[0])-1
+		self.nbFeatures = len(data[0])-1	
 
 		self.W1 = NN.initMatrix(self.nbHiddenNodes, self.nbFeatures)
 		self.W2 = NN.initMatrix(self.nbClass, self.nbHiddenNodes)
