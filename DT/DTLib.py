@@ -162,6 +162,8 @@ def print_tree(root):
 def find_result(instance, root):
 	while root.based_on_which_col != -1:
 		for i in range(len(root.leafs)):
+			# print('root.leafs[i].value='+str(root.leafs[i].value))
+			# print('instance[root.based_on_which_col]='+str(instance[root.based_on_which_col]))
 			if root.leafs[i].value == instance[root.based_on_which_col]:
 				break
 		root = root.leafs[i]
