@@ -19,27 +19,20 @@ def main():
 	data_from_file = np.array(read_file("heart_disease_dataset.csv", ';', True))
 	nbEpochs=int(input("Enter the number of epochs: "))
 	neuron = NeuralNet(data_from_file, 2, 8, 5)
-	print("Enter \n\"r\" for running tests (",nbEpochs, "epochs ) or \n\"b\" for the best accuracy result of last testing")
+	print("Enter \n\"r\" for running tests (",nbEpochs, "epochs ) or \n\"b\" for the best accuracy result of last testing or \n\"s\" for the saving best accuracy result or \n\"l\" for the loading best accuracy result")
 
 	option = input()
-	while option == 'r' or option == 'b':
+	while option == 'r' or option == 'b' or option == 's' or option == 'l':
 		if option == 'r':
 			neuron.train(nbEpochs)
 		elif option == 'b':
 			print('Best result achieved during last tests: ' + str(neuron.bestResult))
-			#print(neuron.W1)
-		print("Enter \n\"r\" for running tests (",nbEpochs, "epochs ) or \n\"b\" for the best accuracy result of last testing")
+		elif option == 's':
+			neuron.dataSave()
+		elif option == 'l':
+			neuron.dataLoad()
+		print("Enter \n\"r\" for running tests (",nbEpochs, "epochs ) or \n\"b\" for the best accuracy result of last testing or \n\"s\" for the saving best accuracy result or \n\"l\" for the loading best accuracy result or \nelse to quit")
 		option = input()
-	
-	#print(neuron.W1)
-	print("Writing best weights output file")
-	filename_weights='best_weights.npz'
-	np.savez(filename_weights, name1=neuron.W1, name2=neuron.W2, name3=neuron.b1, name4=neuron.b2)
-	data = np.load(filename_weights) # reading for future use
-	print(data['name1'])
-	print(data['name2'])
-	print(data['name3'])
-	print(data['name4'])
 
 
 main()

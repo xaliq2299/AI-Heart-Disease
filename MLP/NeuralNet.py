@@ -1,14 +1,6 @@
 import NNLib as NN
 import numpy as np
 
-'''
-!!!!!!!!!!!!!TODO!!!!!!!!!!!
-EARLY STOPPING : MAKE TO DO FUNCTION CHECK ACCURACY DIRECTLY AND UPDATE WEIGHTS AND BIOSES
-EXPORT CSV FILE 
-CHECK tanh FUNCTION 
-
-
-'''
 
 class NeuralNet(object):
 	"""docstring for NeuralNet"""
@@ -19,6 +11,7 @@ class NeuralNet(object):
 	nbFeatures = 0
 	eta = 0.05
 	bestResult = 0.0001
+	filename_weights='best_weights.npz'
 	def __init__(self, data, numberOfClasses, batchSize, numberOfHiddenNodes):
 		self.data = data
 		self.data = self.data.astype(np.float64)
@@ -107,3 +100,21 @@ class NeuralNet(object):
 		trainData = data[:trainingSize][:]
 		testData = data[trainingSize:][:]
 		return trainData, testData
+
+	def dataSave(self):
+		print(str(self.W1))
+		print(str(self.W2))
+		print(str(self.b1))
+		print(str(self.b2))
+		np.savez(self.filename_weights, name1=self.W1, name2=self.W2, name3=self.b1, name4=self.b2)
+
+	def dataLoad(self):
+		data = np.load(self.filename_weights) # reading for future use
+		self.W1 = data['name1']
+		self.W2 = data['name2']
+		self.b1 = data['name3']
+		self.b2 = data['name4']
+		print(str(self.W1))
+		print(str(self.W2))
+		print(str(self.b1))
+		print(str(self.b2))
