@@ -77,6 +77,25 @@ def compareOutput(A, B):
 			counter += 1
 	return counter
 
+# P-preedicted, A-actual
+def compareOutputMetrics(P, A):
+	TP = 0
+	TN = 0
+	FP = 0
+	FN = 0
+	P = np.transpose(P)
+	A = np.transpose(A)
+	for i in range(len(A)):
+		if P[i][0] and A[i][0]:
+			TP += 1
+		if P[i][1] and A[i][1]:
+			FN += 1
+		if P[i][0] and A[i][1]:
+			FP += 1
+		if P[i][1] and A[i][0]:
+			FN += 1
+	return TP, TN, FP, FN
+
 
 def crossEntropy(yHat, y):
 	cost = 0.
