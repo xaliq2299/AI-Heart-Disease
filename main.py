@@ -16,7 +16,7 @@ def read_file(filename, separator, headerExist = False):
 
 def main():
 	data_from_file = np.array(read_file("heart_disease_dataset.csv", ';', True))
-	neuron = NeuralNet(data_from_file, 2, 8, 5)
+	neuron = NeuralNet(data_from_file, 2, 4, 5)
 	print("Enter \"r\" for repeating tests(15 epochs)")
 	option = input()
 	while option == 'r':
