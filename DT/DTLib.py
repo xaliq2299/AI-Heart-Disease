@@ -94,18 +94,18 @@ def max_occcurence(data):
 def get_dict_index(dictionary, value):
 	return list(dictionary.values()).index(value)
 
-def decision_tree(root, data, visited, level):
-	print('enter, level '+str(level))
-	print('visited '+str(visited) + ' length '+str(len(visited)))
-	if (len(np.unique(data.iloc[:, -1])) == 1) or level == 8:
+def decision_tree(root, data, visited, level, maxDepth):
+	# print('enter, level '+str(level))
+	# print('visited '+str(visited) + ' length '+str(len(visited)))
+	if (len(np.unique(data.iloc[:, -1])) == 1) or level == maxDepth:
 		root.based_on_which_col = -1
 		root.leafs = []
 		temp = DT(max_occcurence(data.iloc[:, [-1]]))
 		root.leafs.append(DT(max_occcurence(data.iloc[:, [len(data.columns)-1]])))
-		print('return with root.value '+str(root.value))
-		print(str(len(root.leafs)))
-		print('based_on_which_col '+str(root.based_on_which_col))
-		print('final value '+str(root.leafs[0].value)+'\n')
+		# print('return with root.value '+str(root.value))
+		# print(str(len(root.leafs)))
+		# print('based_on_which_col '+str(root.based_on_which_col))
+		# print('final value '+str(root.leafs[0].value)+'\n')
 		return root
 	index = 0
 
@@ -123,29 +123,29 @@ def decision_tree(root, data, visited, level):
 		temp = DT(max_occcurence(data.iloc[:, [-1]]))
 		root.leafs.append(temp)
 		return root
-	print('index='+str(index))
+	# print('index='+str(index))
 	visited.append(index)
 	root.based_on_which_col = index
-	print('root.value '+str(root.value))
-	print(str(list(np.unique(data.iloc[:, index]))))
+	# print('root.value '+str(root.value))
+	# print(str(list(np.unique(data.iloc[:, index]))))
 	root.leafs = []
 	for i in list(np.unique(data.iloc[:, index])):
-		print('for')
+		# print('for')
 		# root.leafs.append(DT(i))
 		temp = DT(i)
-		print('unique='+str(i))
-		print(str(data.loc[data.iloc[:, index] == i])+'\n')
+		# print('unique='+str(i))
+		# print(str(data.loc[data.iloc[:, index] == i])+'\n')
 		temp_visited = visited.copy()
 		# temp = decision_tree(temp, data.loc[data.iloc[:, index] == i], temp_visited, level+1)
-		root.leafs.append(decision_tree(temp, data.loc[data.iloc[:, index] == i], temp_visited, level+1))
+		root.leafs.append(decision_tree(temp, data.loc[data.iloc[:, index] == i], temp_visited, level+1, maxDepth))
 		# root.leafs[len(root.leafs)-1] = decision_tree(root.leafs[len(root.leafs)-1], data.loc[data.iloc[:, index] == i], visited.copy(), level+1)
-	print('root.leafs len '+str(len(root.leafs)))
+	# print('root.leafs len '+str(len(root.leafs)))
 	return root
 
 
 
 def print_tree(root):
-	# print('enter print')
+	print('\n\n')
 	if root.based_on_which_col == -1:
 		print('final value '+str(root.leafs[0].value))
 		return
@@ -155,4 +155,17 @@ def print_tree(root):
 	for i in root.leafs:
 		print(str(i.value))
 		print_tree(i)
-	# print(str(root.value))
+	print('\n\n')
+
+
+
+def find_result(instance, root):
+	while root.based_on_which_col != -1:
+		for i in range(len(root.leafs)):
+			if root.leafs[i].value == instance[root.based_on_which_col]:
+				break
+		root = root.leafs[i]
+	if root.leafs[0].value == instance[-1]:
+		return 1
+	else:
+		return 0
